@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+  .btn { @apply rounded-xl bg-loop-600 px-4 py-2 font-semibold text-white hover:bg-loop-500 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-loop-600; }
+  .input { @apply w-full rounded-xl border border-slate-300 bg-transparent px-3 py-2 dark:border-slate-700; }
+  .card { @apply rounded-2xl border border-slate-200 p-4 dark:border-slate-800; }
+}

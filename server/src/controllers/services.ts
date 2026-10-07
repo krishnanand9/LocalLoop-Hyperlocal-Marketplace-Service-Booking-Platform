@@ -1,0 +1,10 @@
+import { wrap } from '../utils/async';
+import { AppError } from '../utils/errors';
+import { Provider } from '../models/Provider';
+import { Service } from '../models/Service';
+import { serviceSchema } from '../validators';
+const mineP = async (uid: string) => { const p = await Provider.findOne({ user: uid }); if (!p) throw new AppError(404, 'No business profile'); return p; };
+export const list = wrap(async (req, res) => { const p = await mineP((req as any).user.id); res.json({ ok: true, data: await Service.find({ provider: p._id }) }); });
+export const create = wrap(async (req, res) => { const p = await mineP((req as any).user.id); const s = await Service.create({ ...serviceSchema.parse(req.body), provider: p._id, category: req.body.category || p.category }); res.status(201).json({ ok: true, data: s }); });
+export const update = wrap(async (req, res) => { const p = await mineP((req as any).user.id); const s = await Service.findOneAndUpdate({ _id: req.params.id, provider: p._id }, serviceSchema.partial().parse(req.body), { new: true }); if (!s) throw new AppError(404, 'Service not found'); res.json({ ok: true, data: s }); });
+export const remove = wrap(async (req, res) => { const p = await mineP((req as any).user.id); const s = await Service.findOneAndDelete({ _id: req.params.id, provider: p._id }); if (!s) throw new AppError(404, 'Service not found'); res.json({ ok: true }); });

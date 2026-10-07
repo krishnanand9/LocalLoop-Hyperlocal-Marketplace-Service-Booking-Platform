@@ -1,0 +1,1 @@
+{"name":"localloop","private":true,"scripts":{"dev":"concurrently -n api,web \"npm --prefix server run dev\" \"npm --prefix client run dev\"","install:all":"npm --prefix server install && npm --prefix client install","build":"npm --prefix server run build && npm --prefix client run build","seed":"npm --prefix server run seed"},"devDependencies":{"concurrently":"^9.0.0"}}

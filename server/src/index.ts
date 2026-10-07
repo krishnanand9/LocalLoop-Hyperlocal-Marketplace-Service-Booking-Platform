@@ -1,0 +1,18 @@
+import http from 'http';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import mongoose from 'mongoose';
+import { env } from './config/env';
+import routes from './routes';
+import { initSockets } from './sockets';
+import { notFound, errorHandler } from './middleware/error';
+import { Booking } from './models/Booking';
+const app = express();
+app.use(helmet(), cors({ origin: env.clientUrl }), express.json({ limit: '100kb' }));
+app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 50 }));
+app.use('/api', rateLimit({ windowMs: 60 * 1000, limit: 300 }), routes);
+app.use(notFound, errorHandler);
+const server = http.createServer(app); initSockets(server);
+mongoose.connect(env.mongo).then(async () => { await Booking.syncIndexes(); server.listen(env.port, () => console.log(`API on :${env.port}`)); }).catch(e => { console.error('MongoDB connection failed:', e.message); process.exit(1); });
